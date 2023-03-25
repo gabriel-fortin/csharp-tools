@@ -1,4 +1,5 @@
 ﻿Console.WriteLine("\n");
 
-Console.WriteLine("Hello world");
+SimpleUsingAndCollapsingValues.Run();
 
+Console.WriteLine("\n");
