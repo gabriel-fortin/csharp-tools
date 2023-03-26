@@ -57,23 +57,28 @@ public class Sum<T1, T2, T3>
     }
 
     /// <summary>
-    /// Collapse into a single value. Executes one of the functions depending on the content of this
-    /// <see cref="Sum{T1, T2, T3}" /> and returns the result.
+    /// Collapses this algebraic sum into a single value. Executes one of the given mappers depending
+    /// on the content of this <see cref="Sum{T1, T2, T3}" /> and returns the result from that mapper.
     /// </summary>
     /// <remark>All functions must have the same return type</remark>
     public TResult Reduce<TResult>(Func<T1, TResult> mapper1, Func<T2, TResult> mapper2,
-        Func<T3, TResult> func3)
+        Func<T3, TResult> mapper3)
     {
         return which switch
         {
-            1 => func1(val1!),
-            2 => func2(val2!),
-            3 => func3(val3!),
+            1 => mapper1(val1!),
+            2 => mapper2(val2!),
+            3 => mapper3(val3!),
             _ => throw new Exception(
                    $"Invalid internal state. The value of 'which' is {which} which was unexpected")
         };
     }
 
+    /// <summary>
+    /// Maps this algebraic sum into a new sum, allowing to change the type of all elements.
+    /// Executes one of the given mappers depending on the content of this
+    /// <see cref="Sum{T1, T2, T3}" /> and returns a new <see cref="Sum{T1, T2, T3}" />.
+    /// </summary>
     public Sum<U1, U2, U3> Map<U1, U2, U3>(Func<T1, U1> mapper1, Func<T2, U2> mapper2, Func<T3, U3> mapper3)
     {
         return which switch
@@ -86,16 +91,31 @@ public class Sum<T1, T2, T3>
         };
     }
 
+    /// <summary>
+    /// Maps this algebraic sum into a new sum, allowing to change the type of <typeparamref name="T1" />.
+    /// Executes the given mapper if the content of this <see cref="Sum{T1, T2, T3}" /> is
+    /// of type <typeparamref name="T1" /> and returns a new <see cref="Sum{T1, T2, T3}" />.
+    /// </summary>
     public Sum<T1New, T2, T3> MapT1<T1New>(Func<T1, T1New> mapper)
     {
         return Map(mapper, x => x, x => x);
     }
 
+    /// <summary>
+    /// Maps this algebraic sum into a new sum, allowing to change the type of <typeparamref name="T2" />.
+    /// Executes the given mapper if the content of this <see cref="Sum{T1, T2, T3}" /> is
+    /// of type <typeparamref name="T2" /> and returns a new <see cref="Sum{T1, T2, T3}" />.
+    /// </summary>
     public Sum<T1, T2New, T3> MapT2<T2New>(Func<T2, T2New> mapper)
     {
         return Map(x => x, mapper, x => x);
     }
 
+    /// <summary>
+    /// Maps this algebraic sum into a new sum, allowing to change the type of <typeparamref name="T3" />.
+    /// Executes the given mapper if the content of this <see cref="Sum{T1, T2, T3}" /> is
+    /// of type <typeparamref name="T3" /> and returns a new <see cref="Sum{T1, T2, T3}" />.
+    /// </summary>
     public Sum<T1, T2, T3New> MapT3<T3New>(Func<T3, T3New> mapper)
     {
         return Map(x => x, x => x, mapper);
