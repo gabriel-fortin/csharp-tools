@@ -96,7 +96,7 @@ public class Sum<T1, T2, T3>
         return Map(x => x, mapper, x => x);
     }
 
-    public Sum<T1, T2, T3New> MapT1<T3New>(Func<T3, T3New> mapper)
+    public Sum<T1, T2, T3New> MapT3<T3New>(Func<T3, T3New> mapper)
     {
         return Map(x => x, x => x, mapper);
     }
