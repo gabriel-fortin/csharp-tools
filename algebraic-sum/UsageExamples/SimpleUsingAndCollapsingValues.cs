@@ -15,7 +15,7 @@ public static class SimpleUsingAndCollapsingValues
             err => Console.WriteLine($"Error ({err.Code}): {err.Message}")
         );
 
-        string result = x.Collapse(
+        string result = x.Reduce(
             s => $"We've got a STRING: {s}",
             i => $"We've got an INT: {i}",
             err => $"Error ({err.Code}): {err.Message}"

@@ -61,7 +61,7 @@ public class Sum<T1, T2, T3>
     /// <see cref="Sum{T1, T2, T3}" /> and returns the result.
     /// </summary>
     /// <remark>All functions must have the same return type</remark>
-    public TResult Collapse<TResult>(Func<T1, TResult> func1, Func<T2, TResult> func2,
+    public TResult Reduce<TResult>(Func<T1, TResult> mapper1, Func<T2, TResult> mapper2,
         Func<T3, TResult> func3)
     {
         return which switch
