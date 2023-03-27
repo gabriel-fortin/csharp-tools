@@ -1,0 +1,63 @@
+{
+	// docs: https://code.visualstudio.com/docs/editor/multi-root-workspaces
+	
+	"folders": [
+		{
+			"name": "–repo root–",
+			"path": ".."
+		},
+		{
+			"path": "AlgebraicSum"
+		},
+		{
+			"path": "UsageExamples"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/bin/": true,
+			"**/obj/": true
+		}
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "algebraic sum: build",
+				"command": "dotnet",
+				"type": "process",
+				"args": [
+					"build",
+					"${workspaceFolder}/algebraic-sum/UsageExamples/UsageExamples.csproj",
+					"/property:GenerateFullPaths=true",
+					"/consoleloggerparameters:NoSummary"
+				],
+				"problemMatcher": "$msCompile"
+			},
+			{
+				"label": "algebraic sum: publish",
+				"command": "dotnet",
+				"type": "process",
+				"args": [
+					"publish",
+					"${workspaceFolder}/algebraic-sum/UsageExamples/UsageExamples.csproj",
+					"/property:GenerateFullPaths=true",
+					"/consoleloggerparameters:NoSummary"
+				],
+				"problemMatcher": "$msCompile"
+			},
+			{
+				"label": "algebraic sum: watch",
+				"command": "dotnet",
+				"type": "process",
+				"args": [
+					"watch",
+					"run",
+					"--project",
+					"${workspaceFolder}/algebraic-sum/UsageExamples/UsageExamples.csproj"
+				],
+				"problemMatcher": "$msCompile"
+			}
+		]
+	}
+}
