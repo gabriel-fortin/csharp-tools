@@ -93,12 +93,13 @@ public class UsingErrableController : SimplifiedController
     }
 
     // simplify: replace lambdas with method reference where possible
+    // replace OnSuccess with Then
 
     public ViewAction Action5(InputModel viewModel)
     {
         return new Validator().ValidateIntoErrable(viewModel)
-            .OnSuccess(SomeProcessing)
-            .OnSuccess(View)                                       //  <====
+            .Then(SomeProcessing)
+            .Then(View)                                            //  <====
             .OnError(this.CopyErrorsToModelStateAndReturn(View))   //  <====
             .Reduce();
     }

@@ -19,6 +19,11 @@ public class Errable<TValue, TError> : Sum<TValue, TError>
         return OnSuccess(transform);
     }
 
+    public Errable<TNextValue, TError> Then<TNextValue>(Func<TValue, TNextValue> transform)
+    {
+        return OnSuccess(transform);
+    }
+
     /// <summary>
     /// Executes the given transform if this object holds a successful value
     /// </summary>
@@ -44,7 +49,8 @@ public class Errable<TValue, TError> : Sum<TValue, TError>
     /// <summary>
     /// Executes the given transform if this object holds an error value
     /// </summary>
-    public Errable<TValue, TNextError> OnError<TNextError>(Func<TError, Errable<TValue, TNextError>> transform)
+    public Errable<TValue, TNextError> OnError<TNextError>(
+        Func<TError, Errable<TValue, TNextError>> transform)
     {
         return Reduce(
             value => new Errable<TValue, TNextError>(value),
@@ -55,7 +61,9 @@ public class Errable<TValue, TError> : Sum<TValue, TError>
     /// <summary>
     /// Executes the given transform if this object holds an error value
     /// </summary>
-    /// <remark> In this overload the transform never fails (because it doesn't return an Errable) </remark>
+    /// <remark>
+    /// In this overload the transform is assumed to never fail (because it doesn't return an Errable)
+    /// </remark>
     public Errable<TValue, TNextError> OnError<TNextError>(Func<TError, TNextError> transform)
     {
         return Reduce(
