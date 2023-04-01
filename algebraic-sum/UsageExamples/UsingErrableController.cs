@@ -1,4 +1,5 @@
 using AlgebraicSum;
+using AlgebraicSum.Errables;
 
 public class UsingErrableController : SimplifiedController
 {

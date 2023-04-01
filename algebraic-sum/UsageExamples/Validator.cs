@@ -1,4 +1,4 @@
-using AlgebraicSum;
+using AlgebraicSum.Errables;
 
 public class Validator
 {

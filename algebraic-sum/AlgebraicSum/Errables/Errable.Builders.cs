@@ -1,4 +1,4 @@
-namespace AlgebraicSum;
+namespace AlgebraicSum.Errables;
 
 public static class Errable
 {

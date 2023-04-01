@@ -1,4 +1,4 @@
-namespace AlgebraicSum;
+namespace AlgebraicSum.Errables;
 
 // alternative name:
 // Fallible<TError, TValue>
