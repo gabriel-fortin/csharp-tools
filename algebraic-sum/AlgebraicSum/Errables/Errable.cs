@@ -19,6 +19,9 @@ public class Errable<TValue, TError> : Sum<TValue, TError>
         return OnSuccess(transform);
     }
 
+    /// <summary>
+    /// Executes the given transform if this object holds a successful value
+    /// </summary>
     public Errable<TNextValue, TError> Then<TNextValue>(Func<TValue, TNextValue> transform)
     {
         return OnSuccess(transform);
@@ -37,6 +40,12 @@ public class Errable<TValue, TError> : Sum<TValue, TError>
         );
     }
 
+    /// <summary>
+    /// Executes the given transform if this object holds a successful value
+    /// </summary>
+    /// <remark>
+    /// In this overload the transform is assumed to never fail (because it doesn't return an Errable)
+    /// </remark>
     public Errable<TNextValue, TError> OnSuccess<TNextValue>(
         Func<TValue, TNextValue> transform)
     {
@@ -72,9 +81,25 @@ public class Errable<TValue, TError> : Sum<TValue, TError>
         );
     }
 
+    /// <summary>
+    /// Collapses this object into a single value. Executes one of the given mappers depending
+    /// on the content of this <see cref="Errable{T1, T2}" /> and returns the result from that mapper.
+    /// </summary>
+    /// <remark>Both mappers must have the same return type</remark>
     public new TResult Reduce<TResult>(Func<TValue, TResult> onSuccess, Func<TError, TResult> onError)
     {
         return base.Reduce(onSuccess, onError);
+    }
+
+    /// <summary>
+    /// Collapses this object into a single value. If this <see cref="Errable{T1, T2}" /> contains
+    /// a success value, that value is returned. If it contains an error, the given
+    /// <paramref name="onError"/> mapper is executed and its result returned.
+    /// </summary>
+    /// <remark>The <paramref name="onError"/> mapper must return a <typeparamref name="TValue"/></remark>
+    public TValue Reduce(Func<TError, TValue> onError)
+    {
+        return Reduce(x => x, onError);
     }
 
 
