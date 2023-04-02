@@ -1,4 +1,5 @@
 using AlgebraicSum.Errables;
+using AlgebraicSum.Fallibles;
 
 public class Validator
 {
@@ -19,6 +20,18 @@ public class Validator
             return new Errable<InputModel, List<Error>>(model);
         }
         return new Errable<InputModel, List<Error>>(validationResult.Errors);
+    }
+
+    public Fallible<InputModel, UsingFallibleController.ErrorList> ValidateAsFallible(InputModel model)
+    {
+        ValidationResult validationResult = Validate(model);
+        if (validationResult.IsValid)
+        {
+            return new Fallible<InputModel, UsingFallibleController.ErrorList>(model);
+        }
+        var errorList = new UsingFallibleController.ErrorList();
+        errorList.AddRange(validationResult.Errors);
+        return new Fallible<InputModel, UsingFallibleController.ErrorList>(errorList);
     }
 }
 
