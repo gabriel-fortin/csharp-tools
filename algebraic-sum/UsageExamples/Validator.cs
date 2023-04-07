@@ -27,11 +27,16 @@ public class Validator
         ValidationResult validationResult = Validate(model);
         if (validationResult.IsValid)
         {
-            return new Fallible<InputModel, UsingFallibleController.ErrorList>(model);
+            return Fallible<InputModel, UsingFallibleController.ErrorList>.WrapValue(model);
         }
         var errorList = new UsingFallibleController.ErrorList();
         errorList.AddRange(validationResult.Errors);
-        return new Fallible<InputModel, UsingFallibleController.ErrorList>(errorList);
+        return Fallible<InputModel, UsingFallibleController.ErrorList>.WrapError(errorList);
+    }
+
+    public Task<Fallible<InputModel, UsingFallibleController.ErrorList>> ValidateAsFallibleAsync(InputModel model)
+    {
+        return Task.FromResult(ValidateAsFallible(model));
     }
 }
 
