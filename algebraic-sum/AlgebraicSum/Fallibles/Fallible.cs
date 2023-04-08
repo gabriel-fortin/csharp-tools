@@ -186,6 +186,28 @@ public class Fallible<TSuccess, TError>
         return internalValue.Reduce(whenSuccess, whenError);
     }
 
+    /// <summary>
+    /// Extracts the content of this <see cref="Fallible{T1, T2}"/>.
+    /// If this object contains an erroneous value, returns the result of running
+    /// the given <paramref name="whenError"/> mapper on the value.
+    /// Otherwise, returns the successful value as-is.
+    /// </summary>
+    public TSuccess Unwrap(Func<TError, TSuccess> whenError)
+    {
+        return Unwrap<TSuccess>(x => x, whenError);
+    }
+
+    /// <summary>
+    /// Extracts the content of this <see cref="Fallible{T1, T2}"/>.
+    /// If this object contains a successful value, returns the result of running
+    /// the given <paramref name="whenSuccess"/> mapper on the value.
+    /// Otherwise, returns the erroneous value as-is.
+    /// </summary>
+    public TError Unwrap(Func<TSuccess, TError> whenSuccess)
+    {
+        return Unwrap<TError>(whenSuccess, x => x);
+    }
+
     // potential additional methods
     //      TSuccess UnwrapSuccess()  // can throw
     //      TError UnwrapError()  // can throw
