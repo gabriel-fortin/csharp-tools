@@ -27,7 +27,7 @@ public class Validator
         ValidationResult validationResult = Validate(model);
         if (validationResult.IsValid)
         {
-            return Fallible<InputModel, UsingFallibleController.ErrorList>.WrapValue(model);
+            return Fallible<InputModel, UsingFallibleController.ErrorList>.WrapSuccess(model);
         }
         var errorList = new UsingFallibleController.ErrorList();
         errorList.AddRange(validationResult.Errors);

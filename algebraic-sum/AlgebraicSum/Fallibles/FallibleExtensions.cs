@@ -3,8 +3,8 @@ namespace AlgebraicSum.Fallibles;
 public static class FallibleExtensions
 {
     /// <summary>
-    /// Extracts the content of this <see cref="Fallible{TValue, TError}"/>
-    /// when the types for success and error are the same
+    /// Extracts the content of this <see cref="Fallible{T1, T2}"/>
+    /// when the type of the success value is the same as the type of the error value
     /// </summary>
     public static T Unwrap<T>(this Fallible<T, T> fallible)
     {
@@ -13,7 +13,7 @@ public static class FallibleExtensions
 }
 
 /// <summmary>
-/// Extensions for a <see cref="Fallible{TValue, TError}"/> wrapped in a <see cref="Task{TResult}"/>
+/// Extensions for a <see cref="Fallible{T1, T2}"/> wrapped in a <see cref="Task{TResult}"/>
 /// </summmary>
 public static class FallibleAsyncExtensions
 {
@@ -25,54 +25,54 @@ public static class FallibleAsyncExtensions
     // - mapper's result: can be async or sync: Task<Z> or Z
     // - method: can be .Then, .OnError, .Do, .DoOnError
 
-    // <inheritdoc cref="Fallible.Then{TNextValue}(Func{TValue, TNextValue})"/>
-    public static async Task<Fallible<TNextValue, TError>> Then<TValue, TError, TNextValue>(
-        this Task<Fallible<TValue, TError>> fallibleTask,
-        Func<TValue, TNextValue> mapper)
+    /// <inheritdoc cref="Fallible{TSuccess, TError}.Then{TNextSuccess}(Func{TSuccess, TNextSuccess})"/>
+    public static async Task<Fallible<TNextSuccess, TError>> Then<TSuccess, TError, TNextSuccess>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
+        Func<TSuccess, TNextSuccess> mapper)
     {
         return (await fallibleTask).Then(mapper);
     }
 
-    // <inheritdoc cref="Fallible{TValue, TError}.Then{TNextValue}(Func{TValue, Fallible{TNextValue, TError}})"/>
-    public static async Task<Fallible<TNextValue, TError>> Then<TValue, TError, TNextValue>(
-        this Task<Fallible<TValue, TError>> fallibleTask,
-        Func<TValue, Fallible<TNextValue, TError>> wrappingMapper)
+    /// <inheritdoc cref="Fallible{TSuccess, TError}.Then{TNextSuccess}(Func{TNextSuccess, Fallible{TNextSuccess, TError}})"/>
+    public static async Task<Fallible<TNextSuccess, TError>> Then<TSuccess, TError, TNextSuccess>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
+        Func<TSuccess, Fallible<TNextSuccess, TError>> wrappingMapper)
     {
         return (await fallibleTask).Then(wrappingMapper);
     }
 
-    public static async Task<Fallible<TNextValue, TError>> Then<TValue, TError, TNextValue>(
-        this Task<Fallible<TValue, TError>> fallibleTask,
-        Func<TValue, Task<TNextValue>> asyncMapper)
+    public static async Task<Fallible<TNextSuccess, TError>> Then<TSuccess, TError, TNextSuccess>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
+        Func<TSuccess, Task<TNextSuccess>> asyncMapper)
     {
-        Task<TNextValue> capturedResult = null!;
+        Task<TNextSuccess> capturedResult = null!;
         await fallibleTask.Do(success => capturedResult = asyncMapper(success));
         return await capturedResult;
     }
 
-    public static async Task<Fallible<TNextValue, TError>> Then<TValue, TError, TNextValue>(
-        this Task<Fallible<TValue, TError>> fallibleTask,
-        Func<TValue, Task<Fallible<TNextValue, TError>>> asyncWrappingMapper)
+    public static async Task<Fallible<TNextSuccess, TError>> Then<TSuccess, TError, TNextSuccess>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
+        Func<TSuccess, Task<Fallible<TNextSuccess, TError>>> asyncWrappingMapper)
     {
         return await (await fallibleTask).Then(asyncWrappingMapper);
     }
 
-    public static async Task<Fallible<TValue, TNextError>> OnError<TValue, TError, TNextError>(
-        this Task<Fallible<TValue, TError>> fallibleTask,
+    public static async Task<Fallible<TSuccess, TNextError>> OnError<TSuccess, TError, TNextError>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
         Func<TError, TNextError> mapper)
     {
         return (await fallibleTask).OnError(mapper);
     }
 
-    public static async Task<Fallible<TValue, TNextError>> OnError<TValue, TError, TNextError>(
-        this Task<Fallible<TValue, TError>> fallibleTask,
-        Func<TError, Fallible<TValue, TNextError>> wrappingMapper)
+    public static async Task<Fallible<TSuccess, TNextError>> OnError<TSuccess, TError, TNextError>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
+        Func<TError, Fallible<TSuccess, TNextError>> wrappingMapper)
     {
         return (await fallibleTask).OnError(wrappingMapper);
     }
 
-    public static async Task<Fallible<TValue, TNextError>> OnError<TValue, TError, TNextError>(
-        this Task<Fallible<TValue, TError>> fallibleTask,
+    public static async Task<Fallible<TSuccess, TNextError>> OnError<TSuccess, TError, TNextError>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
         Func<TError, Task<TNextError>> asyncMapper)
     {
         Task<TNextError> capturedResult = default!;
@@ -80,36 +80,36 @@ public static class FallibleAsyncExtensions
         return await capturedResult;
     }
 
-    public static async Task<Fallible<TValue, TNextError>> OnError<TValue, TError, TNextError>(
-        this Task<Fallible<TValue, TError>> fallibleTask,
-        Func<TError, Task<Fallible<TValue, TNextError>>> asyncWrappingMapper)
+    public static async Task<Fallible<TSuccess, TNextError>> OnError<TSuccess, TError, TNextError>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
+        Func<TError, Task<Fallible<TSuccess, TNextError>>> asyncWrappingMapper)
     {
         return await (await fallibleTask).OnError(asyncWrappingMapper);
     }
 
-    public static async Task<Fallible<TValue, TError>> Do<TValue, TError>(
-        this Task<Fallible<TValue, TError>> fallibleTask,
-        Action<TValue> action)
+    public static async Task<Fallible<TSuccess, TError>> Do<TSuccess, TError>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
+        Action<TSuccess> action)
     {
         return (await fallibleTask).Do(action);
     }
 
-    public static async Task<Fallible<TValue, TError>> Do<TValue, TError>(
-        this Task<Fallible<TValue, TError>> fallibleTask,
-        Func<TValue, Task> asyncAction)
+    public static async Task<Fallible<TSuccess, TError>> Do<TSuccess, TError>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
+        Func<TSuccess, Task> asyncAction)
     {
         return await (await fallibleTask).Do(asyncAction);
     }
 
-    public static async Task<Fallible<TValue, TError>> DoWithError<TValue, TError>(
-        this Task<Fallible<TValue, TError>> fallibleTask,
+    public static async Task<Fallible<TSuccess, TError>> DoWithError<TSuccess, TError>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
         Action<TError> action)
     {
         return (await fallibleTask).DoWithError(action);
     }
 
-    public static async Task<Fallible<TValue, TError>> DoWithError<TValue, TError>(
-        this Task<Fallible<TValue, TError>> fallibleTask,
+    public static async Task<Fallible<TSuccess, TError>> DoWithError<TSuccess, TError>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
         Func<TError, Task> asyncAction)
     {
         return await (await fallibleTask).DoWithError(asyncAction);
