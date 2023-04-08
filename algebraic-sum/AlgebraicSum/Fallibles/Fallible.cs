@@ -26,9 +26,9 @@ public class Fallible<TSuccess, TError>
     }
 
     /// <summary>
-    /// If this object contains a successful value, runs the given <paramref name="mapper"/> and
-    /// returns a new <see cref="Fallible{T1, T2}"/> wrapping the <paramref name="mapper"/>'s return
-    /// value as the new successful value.
+    /// If this object contains a successful value, runs the given <paramref name="mapper"/>
+    /// on the value and returns a new <see cref="Fallible{T1, T2}"/> wrapping the
+    /// <paramref name="mapper"/>'s return value as the new successful value.
     /// Otherwise, returns a new <see cref="Fallible{T1, T2}"/> wrapping the erroneous
     /// value from this object.
     /// </summary>
@@ -42,7 +42,7 @@ public class Fallible<TSuccess, TError>
 
     /// <summary>
     /// If this object contains a successful value, returns the result of running
-    /// the given <paramref name="wrappingMapper"/>.
+    /// the given <paramref name="wrappingMapper"/> on the value.
     /// Otherwise, returns a new <see cref="Fallible{T1, T2}"/> wrapping the erroneous
     /// value from this object.
     /// </summary>
@@ -82,7 +82,7 @@ public class Fallible<TSuccess, TError>
     }
 
     /// <summary>
-    /// If this object contains an erroneous value, runs the given <paramref name="mapper"/> and
+    /// If this object contains an erroneous value, runs the given <paramref name="mapper"/> on the value and
     /// returns a new <see cref="Fallible{T1, T2}"/> wrapping the <paramref name="mapper"/>'s return
     /// value as the new erroneous value.
     /// Otherwise, returns a new <see cref="Fallible{T1, T2}"/> wrapping the successful
@@ -98,7 +98,7 @@ public class Fallible<TSuccess, TError>
 
     /// <summary>
     /// If this object contains an erroneous value, returns the result of running
-    /// the given <paramref name="wrappingMapper"/>.
+    /// the given <paramref name="wrappingMapper"/> on the value.
     /// Otherwise, returns a new <see cref="Fallible{T1, T2}"/> wrapping the successful
     /// value as this object.
     /// </summary>
@@ -133,7 +133,7 @@ public class Fallible<TSuccess, TError>
 
     /// <summary>
     /// Side effect. <br/>
-    /// If this object contains a successful value, runs the given <paramref name="action"/>.
+    /// If this object contains a successful value, runs the given <paramref name="action"/> on the value.
     /// Returns this object.
     /// </summary>
     public Fallible<TSuccess, TError> Do(Action<TSuccess> action)
@@ -156,7 +156,7 @@ public class Fallible<TSuccess, TError>
 
     /// <summary>
     /// Side effect. <br/>
-    /// If this object contains an erroneous value, runs the given <paramref name="action"/>.
+    /// If this object contains an erroneous value, runs the given <paramref name="action"/> on the value.
     /// Returns this object.
     /// </summary>
     public Fallible<TSuccess, TError> DoWithError(Action<TError> action)
@@ -178,7 +178,8 @@ public class Fallible<TSuccess, TError>
 
     /// <summary>
     /// Extracts the content of this <see cref="Fallible{T1, T2}"/>
-    /// using the given unwrapping mappers
+    /// using one of the given unwrapping mappers,
+    /// choosing one depending on whether the value is a success or an error.
     /// </summary>
     public T Unwrap<T>(Func<TSuccess, T> whenSuccess, Func<TError, T> whenError)
     {
