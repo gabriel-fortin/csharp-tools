@@ -33,6 +33,8 @@ public class UsingFallibleController : SimplifiedController
         ModelStateErrors.AddRange(errors.Select(x => x.Message));
     }
 
+
+
     public ViewAction ActionMethod(InputModel inputModel)
     {
         return new Validator().ValidateAsFallible(inputModel)
@@ -43,25 +45,25 @@ public class UsingFallibleController : SimplifiedController
             // if the above succeeded, use output model for a side effect (without changing it)
             .Do(Audit)
             // the above returns a Fallible<OutputModel, ErrorList>
-            // if the above succeeded, transform output model into a ViewAction
+            // if the above succeeded, transform output model into a ViewAction using `View(object)`
             .Then(View)
             // the above returns a Fallible<ViewAction, ErrorList>
-            // if the above failed, use error list for a side effect (without changing it)
+            // if the above failed, use the error list for a side effect (without changing it)
             .DoWithError(CopyErrorsToModelState)
             // the above returns a Fallible<ViewAction, ErrorList>
-            // if the above failed, transform error list into a View Action
-            .OnError(View)
+            // if the object contains errors, transform the error list into a View Action
+            .OnError(_ => View())
             // the above returns a Fallible<ViewAction, ViewAction>
-            // transform into a plain ViewAction
+            // extract the value (be it success or error, both are a ViewAction)
             .Unwrap();
             // the above returns a ViewAction
     }
 
-    public Task<ViewAction> ActionMethodAsync(InputModel inputModel)
+    public async Task<ViewAction> ActionMethodAsync(InputModel inputModel)
     {
-        return new Validator().ValidateAsFallibleAsync(inputModel)
+        return await new Validator().ValidateAsFallibleAsync(inputModel)
             // the above returns a Task<Fallible<InputModel, ErrorList>>
-            // if the above succeeded, do some async processing (maybe an API call)
+            // if the above succeeded, use its result to do some async processing (maybe an API call)
             .Then(SomeProcessingAsync)
             // the above returns a Task<Fallible<OutputModel, ErrorList>>
             // if the above succeeded, use output model for a side effect (without changing it)
@@ -70,13 +72,13 @@ public class UsingFallibleController : SimplifiedController
             // if the above succeeded, transform output model into a ViewAction
             .Then(View)
             // the above returns a Task<Fallible<ViewAction, ErrorList>>
-            // if the above failed, use error list for a side effect (without changing it)
+            // if the above failed, use the error list for a side effect (without changing it)
             .DoWithError(CopyErrorsToModelState)
             // the above returns a Task<Fallible<ViewAction, ErrorList>>
-            // if the above failed, transform error list into a View Action
-            .OnError(View)
+            // if the object contains errors, transform the error list into a View Action
+            .OnError(_ => View())
             // the above returns a Task<Fallible<ViewAction, ViewAction>>
-            // transform into a plain ViewAction
+            // extract the value (be it success or error, both are a ViewAction at this point)
             .Unwrap();
             // the above returns a Task<ViewAction>
     }
