@@ -5,5 +5,5 @@ public class SimplifiedController
 
     public ViewAction View() => new ViewAction("something", null);
 
-    public ViewAction View(object viewModel) => new ViewAction("something", viewModel);
+    public ViewAction View(OutputModel viewModel) => new ViewAction("something", viewModel);
 }
