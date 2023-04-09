@@ -55,9 +55,7 @@ public class Fallible<TSuccess, TError>
         );
     }
 
-    /// <summary>
-    /// AAAAAAA TODO
-    /// </summary>
+    /// <inheritdoc cref="Then{TNextSuccess}(Func{TSuccess, TNextSuccess})"/>
     /// <remarks>The resulting <see cref="Fallible{T1,T2}"/> is wrapped in a <see cref="Task"/></remarks>
     public async Task<Fallible<TNextSuccess, TError>> Then<TNextSuccess>(
         Func<TSuccess, Task<TNextSuccess>> asyncMapper)
@@ -68,9 +66,7 @@ public class Fallible<TSuccess, TError>
         );
     }
 
-    /// <summary>
-    /// BBBBBBB TODO
-    /// </summary>
+    /// <inheritdoc cref="Then{TNextSuccess}(Func{TSuccess, Fallible{TNextSuccess, TError}})"/>
     /// <remarks>The resulting <see cref="Fallible{T1,T2}"/> is wrapped in a <see cref="Task"/></remarks>
     public async Task<Fallible<TNextValue, TError>> Then<TNextValue>(
         Func<TSuccess, Task<Fallible<TNextValue, TError>>> asyncWrappingMapper)
@@ -82,11 +78,11 @@ public class Fallible<TSuccess, TError>
     }
 
     /// <summary>
-    /// If this object contains an erroneous value, runs the given <paramref name="mapper"/> on the value and
-    /// returns a new <see cref="Fallible{T1, T2}"/> wrapping the <paramref name="mapper"/>'s return
-    /// value as the new erroneous value.
+    /// If this object contains an erroneous value, runs the given <paramref name="mapper"/>
+    /// on the value and returns a new <see cref="Fallible{T1, T2}"/> wrapping the
+    /// <paramref name="mapper"/>'s return value as the new erroneous value.
     /// Otherwise, returns a new <see cref="Fallible{T1, T2}"/> wrapping the successful
-    /// value of this object.
+    /// value from this object.
     /// </summary>
     public Fallible<TSuccess, TNextError> OnError<TNextError>(Func<TError, TNextError> mapper)
     {
@@ -100,7 +96,7 @@ public class Fallible<TSuccess, TError>
     /// If this object contains an erroneous value, returns the result of running
     /// the given <paramref name="wrappingMapper"/> on the value.
     /// Otherwise, returns a new <see cref="Fallible{T1, T2}"/> wrapping the successful
-    /// value as this object.
+    /// value from this object.
     /// </summary>
     public Fallible<TSuccess, TNextError> OnError<TNextError>(
         Func<TError, Fallible<TSuccess, TNextError>> wrappingMapper)
@@ -111,6 +107,7 @@ public class Fallible<TSuccess, TError>
         );
     }
 
+    /// <inheritdoc cref="OnError{TNextError}(Func{TError, TNextError})"/>
     /// <remarks>The resulting <see cref="Fallible{T1,T2}"/> is wrapped in a <see cref="Task"/></remarks>
     public async Task<Fallible<TSuccess, TNextError>> OnError<TNextError>(
         Func<TError, Task<TNextError>> asyncMapper)
@@ -121,6 +118,7 @@ public class Fallible<TSuccess, TError>
         );
     }
 
+    /// <inheritdoc cref="OnError{TNextError}(Func{TError, Fallible{TSuccess, TNextError}})"/>
     /// <remarks>The resulting <see cref="Fallible{T1,T2}"/> is wrapped in a <see cref="Task"/></remarks>
     public async Task<Fallible<TSuccess, TNextError>> OnError<TNextError>(
         Func<TError, Task<Fallible<TSuccess, TNextError>>> asyncWrappingMapper)
@@ -142,9 +140,7 @@ public class Fallible<TSuccess, TError>
         return this;
     }
 
-    /// <summary>
-    /// CCCCC  // when the action is awaitable (for example audit that makes an HTTP call)
-    /// </summary>
+    /// <inheritdoc cref="Do(Action{TSuccess})"/>
     /// <remarks>The resulting <see cref="Fallible{T1,T2}"/> is wrapped in a <see cref="Task"/></remarks>
     public async Task<Fallible<TSuccess, TError>> Do(Func<TSuccess, Task> asyncAction)
     {
@@ -165,9 +161,8 @@ public class Fallible<TSuccess, TError>
         return this;
     }
 
-    /// <summary>
-    /// DDDDDD  // when the action is awaitable (for example audit that makes an HTTP call)
-    /// </summary>
+    /// <inheritdoc cref="DoWithError(Action{TError})(Action{TSuccess})"/>
+    /// <remarks>The resulting <see cref="Fallible{T1,T2}"/> is wrapped in a <see cref="Task"/></remarks>
     public async Task<Fallible<TSuccess, TError>> DoWithError(Func<TError, Task> asyncAction)
     {
         TError capturedValue = default!;
@@ -178,8 +173,8 @@ public class Fallible<TSuccess, TError>
 
     /// <summary>
     /// Extracts the content of this <see cref="Fallible{T1, T2}"/>
-    /// using one of the given unwrapping mappers,
-    /// choosing one depending on whether the value is a success or an error.
+    /// using one of the given unwrapping mappers. The choice of mapper
+    /// is made based on the value in this object being a success or an error.
     /// </summary>
     public T Unwrap<T>(Func<TSuccess, T> whenSuccess, Func<TError, T> whenError)
     {
@@ -214,11 +209,19 @@ public class Fallible<TSuccess, TError>
     //      bool TryUnwrapSuccess(out TSuccess s)
     //      bool TryUnwrapError(out TError e)
 
+    /// <summary>
+    /// Creates a <see cref="Fallible{TSuccess, TError}"/>
+    /// that wraps the given <paramref name="success"/> value.
+    /// </summary>
     public static Fallible<TSuccess, TError> WrapSuccess(TSuccess success)
     {
         return new Fallible<TSuccess, TError>(success);
     }
 
+    /// <summary>
+    /// Creates a <see cref="Fallible{TSuccess, TError}"/>
+    /// that wraps the given <paramref name="error"/> value.
+    /// </summary>
     public static Fallible<TSuccess, TError> WrapError(TError error)
     {
         return new Fallible<TSuccess, TError>(error);
