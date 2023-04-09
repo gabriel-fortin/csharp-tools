@@ -83,6 +83,26 @@ public class UsingFallibleController : SimplifiedController
             // the above returns a Task<ViewAction>
     }
 
+    public ViewAction AlternativeUnwrapping(InputModel inputModel)
+    {
+        return new Validator().ValidateAsFallible(inputModel)
+            // the above returns a Fallible<InputModel, ErrorList>
+            // if the above succeeded, do some processing
+            .Then(SomeProcessing)
+            // the above returns a Fallible<OutputModel, ErrorList>
+            // if the above succeeded, use output model for a side effect (without changing it)
+            .Do(Audit)
+            // the above returns a Fallible<OutputModel, ErrorList>
+            // if the above failed, use the error list for a side effect (without changing it)
+            .DoWithError(CopyErrorsToModelState)
+            // the above returns a Fallible<OutputModel, ErrorList>
+            // extract the value (specifying a mapper for each case, both mappers return a ViewAction)
+            .Unwrap(
+                whenSuccess: View,
+                whenError: _ => View());
+            // the above returns a ViewAction
+    }
+
     // public ViewAction ActionMethod_v1(InputModel inputModel)
     // {
     //     return new Validator().ValidateAsFallible(inputModel)
