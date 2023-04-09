@@ -115,6 +115,14 @@ public static class FallibleAsyncExtensions
         return await (await fallibleTask).DoWithError(asyncAction);
     }
 
+    public static async Task<TResult> Unwrap<TSuccess, TError, TResult>(
+        this Task<Fallible<TSuccess, TError>> fallibleTask,
+        Func<TSuccess, TResult> whenSuccess,
+        Func<TError, TResult> whenError)
+    {
+        return (await fallibleTask).Unwrap(whenSuccess, whenError);
+    }
+
 
     public static async Task<T> Unwrap<T>(this Task<Fallible<T, T>> fallibleTask)
     {
