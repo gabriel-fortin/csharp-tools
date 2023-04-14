@@ -1,17 +1,5 @@
 namespace AlgebraicSum.Fallibles;
 
-public static class FallibleExtensions
-{
-    /// <summary>
-    /// Extracts the content of this <see cref="Fallible{T1, T2}"/>
-    /// when the type of the successful value is the same as the type of the erroneous value
-    /// </summary>
-    public static T Unwrap<T>(this Fallible<T, T> fallible)
-    {
-        return fallible.Unwrap(x => x, x => x);
-    }
-}
-
 /// <summary>
 /// Extensions for a <see cref="Fallible{T1, T2}"/> wrapped in a <see cref="Task{TResult}"/>
 /// </summary>
@@ -25,6 +13,9 @@ public static class FallibleAsyncExtensions
     // - mapper's result: can be wrapped or plain; a Fallible<X, Y> or X
     // - mapper's result: can be async or sync; Task<Z> or Z
     // - method: can be `.Then`, `.OnError`, `.Do`, or `.DoOnError`
+
+
+    /***** THEN methods ********************************************/
 
     /// <inheritdoc cref="Fallible{TSuccess, TError}.Then{TNextSuccess}(Func{TSuccess, Task{TNextSuccess}})"/>
     public static async Task<Fallible<TNextSuccess, TError>> Then<TSuccess, TError, TNextSuccess>(
@@ -60,6 +51,9 @@ public static class FallibleAsyncExtensions
         return await (await fallibleTask).Then(asyncWrappingMapper);
     }
 
+
+    /***** ON ERROR methods ********************************************/
+
     /// <inheritdoc cref="Fallible{TSuccess, TError}.OnError{TNextError}(Func{TError, Task{TNextError}})"/>
     public static async Task<Fallible<TSuccess, TNextError>> OnError<TSuccess, TError, TNextError>(
         this Task<Fallible<TSuccess, TError>> fallibleTask,
@@ -94,6 +88,9 @@ public static class FallibleAsyncExtensions
         return await (await fallibleTask).OnError(asyncWrappingMapper);
     }
 
+
+    /***** DO methods ********************************************/
+
     /// <inheritdoc cref="Fallible{TSuccess, TError}.Do(Func{TSuccess, Task})"/>
     public static async Task<Fallible<TSuccess, TError>> Do<TSuccess, TError>(
         this Task<Fallible<TSuccess, TError>> fallibleTask,
@@ -109,6 +106,9 @@ public static class FallibleAsyncExtensions
     {
         return await (await fallibleTask).Do(asyncAction);
     }
+
+
+    /***** DO WITH ERROR methods ********************************************/
 
     /// <inheritdoc cref="Fallible{TSuccess, TError}.DoWithError(Func{TError, Task})"/>
     public static async Task<Fallible<TSuccess, TError>> DoWithError<TSuccess, TError>(
@@ -126,6 +126,9 @@ public static class FallibleAsyncExtensions
         return await (await fallibleTask).DoWithError(asyncAction);
     }
 
+
+    /***** UNWRAP methods ********************************************/
+
     /// <inheritdoc cref="Fallible{TSuccess, TError}.Unwrap{T}(Func{TSuccess, T}, Func{TError, T})"/>
     /// <remarks>The result is wrapped in a <see cref="Task"/></remarks>
     public static async Task<TResult> Unwrap<TSuccess, TError, TResult>(
@@ -136,10 +139,19 @@ public static class FallibleAsyncExtensions
         return (await fallibleTask).Unwrap(whenSuccess, whenError);
     }
 
+    /// <summary>
+    /// Extracts the content of this <see cref="Fallible{T1, T2}"/>
+    /// when the type of the successful value is the same as the type of the erroneous value
+    /// </summary>
+    public static T Unwrap<T>(this Fallible<T, T> fallible)
+    {
+        return fallible.Unwrap(x => x, x => x);
+    }
+
     /// <inheritdoc cref="FallibleExtensions.Unwrap{T}(Fallible{T, T})"/>
     /// <remarks>The result is wrapped in a <see cref="Task"/></remarks>
     public static async Task<T> Unwrap<T>(this Task<Fallible<T, T>> fallibleTask)
     {
-        return FallibleExtensions.Unwrap(await fallibleTask);
+        return Unwrap(await fallibleTask);
     }
 }
