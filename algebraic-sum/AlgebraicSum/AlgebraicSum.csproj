@@ -2,8 +2,26 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>org.g14.AlgebraicSum</AssemblyName>
+    <PackageId>AlgebraicSum</PackageId>
+    <Description>Streamlines working with success an failure</Description>
+    <PackageTags>tool, fp, functional programming, async</PackageTags>
+    <PackageProjectUrl>https://github.com/gabriel-fortin/csharp-tools</PackageProjectUrl>
+    <PackageVersion>0.1.0</PackageVersion>
+    <Authors>Gabriel Fortin</Authors>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <!-- set up Source Link -->
+    <PublishRepositoryUrl>https://github.com/gabriel-fortin/csharp-tools</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
   </PropertyGroup>
+
+<!-- set up Source Link -->
+<ItemGroup>
+  <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+</ItemGroup>
 
 </Project>
