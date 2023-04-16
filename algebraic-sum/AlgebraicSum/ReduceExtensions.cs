@@ -1,4 +1,4 @@
-namespace AlgebraicSum;
+namespace org.g14.AlgebraicSum;
 
 public static class ReduceExtensions
 {

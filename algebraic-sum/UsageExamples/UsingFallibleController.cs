@@ -1,4 +1,4 @@
-using AlgebraicSum.Fallibles;
+using org.g14.AlgebraicSum.Fallibles;
 
 public class UsingFallibleController : SimplifiedController
 {

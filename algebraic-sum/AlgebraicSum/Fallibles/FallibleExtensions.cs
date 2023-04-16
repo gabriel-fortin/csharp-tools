@@ -1,4 +1,4 @@
-namespace AlgebraicSum.Fallibles;
+namespace org.g14.AlgebraicSum.Fallibles;
 
 /// <summary>
 /// Extensions for a <see cref="Fallible{T1, T2}"/> wrapped in a <see cref="Task{TResult}"/>

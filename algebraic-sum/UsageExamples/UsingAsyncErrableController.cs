@@ -1,4 +1,4 @@
-using AlgebraicSum.Errables;
+using org.g14.AlgebraicSum.Errables;
 
 public class UsingAsyncErrableController : SimplifiedController
 {

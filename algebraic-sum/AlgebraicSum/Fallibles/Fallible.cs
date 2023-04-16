@@ -1,4 +1,4 @@
-namespace AlgebraicSum.Fallibles;
+namespace org.g14.AlgebraicSum.Fallibles;
 // alternative names: Uncertain, Unreliable, YayOrNay
 
 /// <summary>

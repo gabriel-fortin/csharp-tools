@@ -1,5 +1,5 @@
-using AlgebraicSum.Errables;
-using AlgebraicSum.Fallibles;
+using org.g14.AlgebraicSum.Errables;
+using org.g14.AlgebraicSum.Fallibles;
 
 public class Validator
 {

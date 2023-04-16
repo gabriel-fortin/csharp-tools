@@ -1,4 +1,4 @@
-using AlgebraicSum;
+using org.g14.AlgebraicSum;
 
 public static class SimpleUsingAndCollapsingValues
 {

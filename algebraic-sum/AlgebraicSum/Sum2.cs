@@ -1,4 +1,4 @@
-namespace AlgebraicSum;
+namespace org.g14.AlgebraicSum;
 
 /// <summary>
 /// An algebraic sum of the given generic parameters.
