@@ -2,18 +2,24 @@
 
 using System.Diagnostics;
 using System.Collections.Concurrent;
+using System.Text.Json;
 using ConsoleApp;
 
 Console.WriteLine("Hello, World!");
 
 var postcodeEnumerator = new PostcodeEnumerator();
 IEnumerable<string> postcodes = postcodeEnumerator.EnumeratePostcodes("IM10AA")
-    .Take(1)
+        .Take(1)
     ;
 
 string baseUrl = "https://services.gov.im/service/PrepaidPrescriptionCertificates/address-lookup/get/";
 
 using var httpClient = new HttpClient();
+
+JsonSerializerOptions jsonOptions = new JsonSerializerOptions
+{
+    PropertyNameCaseInsensitive = true
+};
 
 int successCount = 0;
 ConcurrentBag<string> failedPostcodes = new ConcurrentBag<string>();
@@ -21,28 +27,37 @@ string lastTriedPostcode = "-";
 object consoleLock = new object();
 
 Stopwatch stopwatch = Stopwatch.StartNew();
-await Parallel.ForEachAsync(
-    postcodes,
-    new ParallelOptions { MaxDegreeOfParallelism = 500 },
-    async (postcode, cancellationToken) =>
-    {
-        Volatile.Write(ref lastTriedPostcode, postcode);
-        string url = $"{baseUrl}{Uri.EscapeDataString(postcode)}?isAjaxRequest=true";
-        using HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
-        if (!response.IsSuccessStatusCode)
+try
+{
+    await Parallel.ForEachAsync(
+        postcodes,
+        new ParallelOptions { MaxDegreeOfParallelism = 500 },
+        async (postcode, cancellationToken) =>
         {
-            failedPostcodes.Add(postcode);
+            Volatile.Write(ref lastTriedPostcode, postcode);
+            string url = $"{baseUrl}{Uri.EscapeDataString(postcode)}?isAjaxRequest=true";
+            using HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
             string body = await response.Content.ReadAsStringAsync(cancellationToken);
-            lock (consoleLock)
+            AddressLookupResponse? addressLookupResponse =
+                JsonSerializer.Deserialize<AddressLookupResponse>(body, jsonOptions);
+            if (!response.IsSuccessStatusCode || addressLookupResponse?.HasErrors != false)
             {
-                Console.WriteLine($"\n\n\n{postcode} - {response.StatusCode} {response.ReasonPhrase}\n{body}");
+                failedPostcodes.Add(postcode);
+                lock (consoleLock)
+                {
+                    Console.WriteLine($"\n\n\n{postcode} - {response.StatusCode} {response.ReasonPhrase}\n{body}");
+                }
             }
-        }
-        else
-        {
-            Interlocked.Increment(ref successCount);
-        }
-    });
+            else
+            {
+                Interlocked.Increment(ref successCount);
+            }
+        });
+}
+catch (Exception e)
+{
+    Console.WriteLine($"Something failed during the postcode enumeration: {e}");
+}
 
 Console.WriteLine($"Elapsed time: {stopwatch.Elapsed}");
 Console.WriteLine($"{successCount} successful postcodes");
