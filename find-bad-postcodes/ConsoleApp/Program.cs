@@ -11,7 +11,7 @@ IEnumerable<string> postcodes = postcodeEnumerator.EnumeratePostcodes("IM10AA")
     .Take(1)
     ;
 
-string baseUrl = "https://services.gov.im/service/DriversAndVehicles/Vehicle/VehicleLicenceDuplicates/AddressLookup?isAjaxRequest=true";
+string baseUrl = "https://services.gov.im/service/PrepaidPrescriptionCertificates/address-lookup/get/";
 
 using var httpClient = new HttpClient();
 
@@ -27,7 +27,7 @@ await Parallel.ForEachAsync(
     async (postcode, cancellationToken) =>
     {
         Volatile.Write(ref lastTriedPostcode, postcode);
-        string url = $"{baseUrl}&postcode={Uri.EscapeDataString(postcode)}";
+        string url = $"{baseUrl}{Uri.EscapeDataString(postcode)}?isAjaxRequest=true";
         using HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
